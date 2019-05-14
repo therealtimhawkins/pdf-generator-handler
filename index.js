@@ -7,7 +7,7 @@ const runGenerator = async (fileName, bucketName, key) => {
     .then((base64File) => {
       console.log('File read successfully...');
 
-      const request = {
+      const requestBody = {
         "bucket": bucketName,
         "key": key,
         "options": {
@@ -17,8 +17,7 @@ const runGenerator = async (fileName, bucketName, key) => {
       };
 
       console.log('Sending file to PDF generator...');
-      axios.post(url, request)
-        .then(response => console.log(response.data));
+      sendFileToGenerator(requestBody);
     });
 }
 
@@ -29,5 +28,10 @@ const readFile = (fileName) => {
     });
   });
 };
+
+const sendFileToGenerator = (requestBody) => {
+  axios.post(url, requestBody)
+    .then(response => console.log(response.data));
+}
 
 runGenerator('./input.html', 'pdfs-from-generator', 'request-key');
