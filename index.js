@@ -1,6 +1,6 @@
 const axios = require('axios');
 const fs = require('fs');
-const url = 'https://8n8jszjxil.execute-api.eu-west-2.amazonaws.com/prod';
+const url = process.env.GENERATOR_URL;
 
 const runGenerator = async (fileName, bucketName, key) => {
   readFile(fileName)
@@ -16,6 +16,7 @@ const runGenerator = async (fileName, bucketName, key) => {
         "htmlDoc": base64File
       };
 
+      console.log('Sending file to PDF generator...');
       axios.post(url, request)
         .then(response => console.log(response.data));
     });
