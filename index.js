@@ -3,11 +3,10 @@ const fs = require('fs');
 const template = require('es6-template-strings');
 const url = process.env.GENERATOR_URL;
 
-const runGenerator = async (fileName, bucketName, key) => {
-  readFile(fileName)
+const runGenerator = async (aws, templateData) => {
+  readFile(aws.fileName)
     .then(file => {
-      const customer = {name: 'Tim', surname: 'Hawkins', age: '26'};
-      const updatedFile = template(file, customer);
+      const updatedFile = template(file, templateData);
       const base64File = Buffer.from(updatedFile).toString('base64');
       return base64File;
     })
@@ -15,8 +14,8 @@ const runGenerator = async (fileName, bucketName, key) => {
       console.log('File read successfully...');
 
       const requestBody = {
-        "bucket": bucketName,
-        "key": key,
+        "bucket": aws.bucketName,
+        "key": aws.key,
         "options": {
           "pageSize": "letter"
         },
@@ -41,4 +40,14 @@ const sendFileToGenerator = (requestBody) => {
     .then(response => console.log(response.data));
 }
 
-runGenerator('./input.html', 'pdfs-from-generator', 'request-key-testing-css-second');
+const awsDetails = {
+  fileName: './input.html',
+  bucketName: 'pdfs-from-generator',
+  key: 'request-key-testing-css-second',
+};
+const templateData = {
+  name: 'Timothy',
+  surname: 'Hawkins',
+  age: '26'
+};
+runGenerator(awsDetails, templateData);
