@@ -1,10 +1,17 @@
 const axios = require('axios');
 const fs = require('fs');
+const template = require('es6-template-strings');
 const url = process.env.GENERATOR_URL;
 
 const runGenerator = async (fileName, bucketName, key) => {
   readFile(fileName)
-    .then((base64File) => {
+    .then(file => {
+      const customer = {name: 'Tim', surname: 'Hawkins', age: '26'};
+      const updatedFile = template(file, customer);
+      const base64File = Buffer.from(updatedFile).toString('base64');
+      return base64File;
+    })
+    .then(base64File => {  
       console.log('File read successfully...');
 
       const requestBody = {
@@ -23,7 +30,7 @@ const runGenerator = async (fileName, bucketName, key) => {
 
 const readFile = (fileName) => {
   return new Promise((resolve, reject) => {
-    fs.readFile(fileName, 'base64', (err, data) => {
+    fs.readFile(fileName, 'utf-8', (err, data) => {
         err ? reject(err) : resolve(data);
     });
   });
@@ -34,4 +41,4 @@ const sendFileToGenerator = (requestBody) => {
     .then(response => console.log(response.data));
 }
 
-runGenerator('./input.html', 'pdfs-from-generator', 'request-key');
+runGenerator('./input.html', 'pdfs-from-generator', 'request-key-testing-css-second');
